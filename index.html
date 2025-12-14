@@ -12,6 +12,7 @@ body {
     color: #e6eef8; 
     margin: 0; 
     padding: 20px; 
+    /* ESTO ES FLEX EN ESCRITORIO */
     display: flex; 
     justify-content: center; 
     align-items: flex-start; 
@@ -279,8 +280,16 @@ body::before {
 
 @media (max-width: 768px) {
     
-    .wrapper {
+    /* ***** REINICIO CRÍTICO DEL BODY ***** */
+    body {
+        /* Desactiva el flexbox para que el contenido fluya verticalmente */
+        display: block; 
         padding: 10px; 
+    }
+    
+    .wrapper {
+        padding: 0;
+        margin: 0 auto; /* Asegura el centrado del contenido principal */
     }
     
     .main-header {
@@ -300,13 +309,24 @@ body::before {
         max-width: 350px; 
     }
     
+    /* CORRECCIÓN FINAL DE LA CALCULADORA */
     #calculator {
-        position: static; 
+        position: static; /* Saca de fixed y la pone en el flujo normal (al final) */
+        
+        /* Neutraliza todas las posibles coordenadas de fixed */
+        top: auto;
+        bottom: auto;
+        left: auto;
+        right: auto; 
+        
+        /* Estilos de tamaño y centrado para la vista móvil */
         width: 90%;
         max-width: 350px; 
-        margin: 30px auto 0; 
-        left: auto;
-        bottom: auto;
+        
+        /* Margen: Arriba (30px), Lados (auto para centrar), Abajo (30px) */
+        margin: 30px auto 30px; 
+        
+        z-index: 1; /* Bajamos el z-index */
     }
 
     .card-btn {
@@ -814,5 +834,4 @@ document.addEventListener("keydown",(e)=>{
 });
 </script>
 </body>
-
 </html>
