@@ -1,0 +1,84 @@
+Front Dusk
+
+Solo:
+
+goda Bestia:130 Planta:149 Pez:110
+scaly Bestia:95 Planta:112 Pez:129
+crock Bestia:91 Planta:107 Pez:123
+catteil Bestia:9 Planta:10 Pez:12
+
+Combo:
+
+goda Bestia:126 Planta:145 Pez:107
+scaly Bestia:93 Planta:109 Pez:126
+crock Bestia:88 Planta:104 Pez:120
+catteil Bestia:8 Planta10: Pez:12
+
+
+
+Mid con iguana:
+
+Solo:
+
+kotaro Bestia:79 Planta:93 Pez:107
+scaly Bestia:98 Planta:115 Pez:132
+crock Bestia:93 Planta:110 Pez:126
+iguana Bestia:70 Planta:82 Pez:94
+
+Combo:
+
+kotaro Bestia:78 Planta:92 Pez:106
+scaly Bestia:97 Planta:114 Pez:131
+crock Bestia:92 Planta:109 Pez:125
+iguana Bestia:69 Planta:81 Pez:94
+
+Back:
+
+Solo:
+
+Silence Bestia:0 Planta:0 Pez:0
+scaly Bestia: Planta:112 Pez:129
+Risky  Bestia: Planta:114 Pez:85 170 Sin 
+Twin Bestia:35 Planta:40 Pez: 29
+
+Combo:
+
+Silence Bestia:0 Planta:0 Pez:0
+scaly Bestia: Planta:109 Pez:126
+Risky Bestia: Planta:111 223 Sin Pez:82 165 Sin
+Twin Bestia:34 x2 Planta:39 x2 Pez:28 x2
+
+
+front2
+
+Solo:
+
+kotaro Bestia:130 Planta:149 Pez:110
+scaly Bestia:95 Planta:112 Pez:129
+crock Bestia:91 Planta:107 Pez:123
+catteil Bestia:9 Planta:10 Pez:12
+
+Combo:
+
+kotaro Bestia:126 Planta:145 Pez:107
+scaly Bestia:93 Planta:109 Pez:126
+crock Bestia:88 Planta:104 Pez:120
+catteil Bestia:8 Planta10: Pez:12
+
+
+mid2
+
+Solo:
+
+kotaro Bestia:79 Planta:93 Pez:107
+scaly Bestia:98 Planta:115 Pez:132
+crock Bestia:93 Planta:110 Pez:126
+rice Bestia:90 Planta: Pez:76
+
+Combo:
+
+kotaro Bestia:78 Planta:92 Pez:106
+scaly Bestia:97 Planta:114 Pez:131
+crock Bestia:92 Planta:109 Pez:125
+rice Bestia:94 Planta: Pez:80
+

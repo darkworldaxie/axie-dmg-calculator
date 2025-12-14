@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Nik3LoDeuM — DMG-Calculate</title>
+<style>
+/* ESTILOS BASE */
+body {
+    font-family: Inter, system-ui; 
+    background: #0d1117; 
+    color: #e6eef8; 
+    margin: 0; 
+    padding: 20px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-start; 
+    min-height: 100vh;
+    background-image: url('img/fondo_axie.jpg'); 
+    background-size: cover;
+    background-attachment: fixed;
+    position: relative; 
+}
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(13, 17, 23, 0.85); 
+    backdrop-filter: blur(5px); 
+    z-index: -1; 
+}
+/* Estilos generales */
+.wrapper{width:100%; max-width:1200px; padding:20px; text-align:center; z-index: 1;} 
+
+/* Encabezado con logo */
+.main-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px; 
+    font-size: 26px;
+    gap: 10px; 
+    font-weight: bold;
+}
+.header-logo {
+    width: 32px; 
+    height: 32px;
+    object-fit: contain;
+}
+
+/* CLAVE RESPONSIVA: Permite que las tarjetas fluyan a la siguiente línea */
+.axie-grid{display:flex; justify-content:center; gap:20px; margin-top:20px; flex-wrap: wrap;} 
+
+/* Borde a cada Axie Card */
+.axie-card{
+    background:#161b22; 
+    border-radius:14px; 
+    padding:16px; 
+    width:320px; 
+    box-shadow:0 0 18px rgba(0,0,0,0.4); 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    position:relative;
+    border: 2px solid #0ff; 
+}
+
+/* Botón de reset individual de Axie (Posición inferior derecha) */
+.reset-axie-btn {
+    position: absolute;
+    bottom: 5px; 
+    right: 5px;
+    width: auto;
+    padding: 4px 10px; 
+    height: auto;
+    border-radius: 8px; 
+    background: #ff0055; 
+    color: #fff;
+    border: 2px solid #000;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: normal;
+    transition: background 0.1s;
+    z-index: 2;
+}
+.reset-axie-btn:hover {
+    background: #ff4488;
+}
+
+/* ALINEACIÓN: Estilos para compensar botones especiales */
+.axie-card[data-has-buttons="true"] .cards-row {
+    margin-top: 10px; 
+}
+.cards-row{
+    display:flex; 
+    gap:10px; 
+    margin-top:20px; 
+    justify-content:center;
+    flex-wrap: wrap; 
+} 
+
+/* NUEVO: Controles de carta individuales (para agrupar botón, modificadores y reset) */
+.card-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px; 
+}
+
+/* NUEVO: Fila para botones de Aumento/Reducción (horizontal) */
+.modifier-row {
+    display: flex;
+    gap: 4px;
+}
+
+.axie-img{width:150px; height:150px; object-fit:contain; margin-bottom:10px; cursor:pointer;}
+.card-btn{width:64px; height:64px; border-radius:10px; border:2px solid #2a3342; background:#11161d; padding:0; cursor:pointer; transition:.15s; display:flex; align-items:center; justify-content:center; position:relative;}
+.card-btn img{width:100%; height:100%; object-fit:contain; border-radius:8px;}
+.card-btn:hover{border-color:#0ff; box-shadow:0 0 10px rgba(0,255,255,0.5);}
+.counter{position:absolute; top:-10px; right:-10px; background:#0ff; color:#000; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold;}
+
+/* ESTILOS BOTONES DE MODIFICACIÓN */
+.reduce-btn, .amplify-btn, .reset-reduction-btn {
+    width: 25px; 
+    height: 25px;
+    border-radius: 6px;
+    background: #11161d;
+    padding: 2px; 
+    cursor: pointer;
+    transition: background 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1px solid #2a3342; /* Estilo base */
+}
+
+/* FIX: ESTILO PARA LAS IMÁGENES DENTRO DE LOS BOTONES DE MODIFICACIÓN */
+.reduce-btn img, .amplify-btn img, .reset-reduction-btn img {
+    width: 100%; /* El 100% del área de contenido del botón (25px - 4px de padding = 21px) */
+    height: 100%;
+    object-fit: contain; 
+}
+
+/* ESTILOS ESPECÍFICOS DE REDUCCIÓN (-20%) */
+.reduce-btn {
+    border-color: #0ff; 
+}
+.reduce-btn:hover {
+    background: #0d2b2b;
+}
+
+/* ESTILOS ESPECÍFICOS DE AUMENTO (+20%) */
+.amplify-btn {
+    border-color: #ffcc00; /* Color amarillo/oro */
+}
+.amplify-btn:hover {
+    background: #333300;
+}
+
+/* ESTILOS ESPECÍFICOS DE RESET */
+.reset-reduction-btn {
+    border-color: #ff0055;
+}
+.reset-reduction-btn:hover {
+    background: #330011;
+}
+
+/* Contador de Reducción */
+.reduction-counter {
+    position: absolute;
+    top: -5px; 
+    right: -5px;
+    background: #ff0055; /* Rojo para reducción */
+    color: #fff;
+    width: 12px; 
+    height: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 2px;
+    line-height: 1; 
+}
+
+/* NUEVO: Contador de Aumento */
+.amplification-counter {
+    position: absolute;
+    top: -5px; 
+    right: -5px;
+    background: #ffcc00; /* Amarillo/Oro para aumento */
+    color: #000;
+    width: 12px; 
+    height: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: bold;
+    padding: 2px;
+    line-height: 1; 
+}
+
+
+.damage-display{margin-top:10px; font-size:18px; font-weight:bold;}
+.total-damage{margin-top:20px; font-size:22px; font-weight:bold;} 
+
+.select-popup{position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:#11161d; border:2px solid #0ff; border-radius:12px; padding:20px; display:none; flex-direction:row; gap:10px; z-index:10;}
+.overlay{position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; z-index:5;}
+
+/* Estilo para simular transparencia en el pop-up */
+#selectPopup button {
+    background: transparent; 
+    border: none; 
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+/* Contenedor de botones de clase */
+.class-row{display:flex; gap:8px; margin-top:8px;}
+/* Botones de clase (ahora con imágenes) */
+.class-btn{
+    padding:6px 4px; 
+    background:#11161d; 
+    border:2px solid #2a3342; 
+    border-radius:10px; 
+    cursor:pointer; 
+    color:#e6eef8; 
+    transition:.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.class-btn.active{border-color:#0ff; box-shadow:0 0 8px rgba(0,255,255,0.6); background:#0d2b2b;}
+.class-icon {
+    width: 16px; 
+    height: 16px;
+    object-fit: contain;
+}
+
+.risky-beast-box{margin-top:6px; display:flex; gap:6px; justify-content:center;}
+.risky-beast-box button{padding:4px 10px; border-radius:8px; background:#11161d; border:2px solid #2a3342; color:#e6eef8; cursor:pointer;}
+.risky-beast-box button.active{border-color:#0ff;}
+
+/* Calculadora (Desktop) */
+#calculator{position:fixed; bottom:20px; left:20px; width:220px; background:#11161d; border:2px solid #0ff; border-radius:12px; padding:10px; color:#0ff; font-family:monospace; z-index:100;}
+#calc-display{
+    width:100%; 
+    background:#0d1117; 
+    border:1px solid #2a3342; 
+    border-radius:6px; 
+    padding:8px; 
+    text-align:right; 
+    font-size:20px; 
+    margin-bottom:6px; 
+    min-height:28px; 
+    color:#0ff;
+    box-sizing: border-box; 
+}
+.calc-buttons{display:grid; grid-template-columns:repeat(4,1fr); gap:4px;}
+.calc-btn{width:100%; height:40px; border-radius:6px; border:none; background:#0d1117; color:#0ff; cursor:pointer; font-size:16px; transition:.1s;}
+.calc-btn:hover{background:#0ff;color:#000;}
+.calc-btn.clear-btn {grid-column: span 4;}
+#resetBtn{margin-top:20px; padding:10px 20px; border:none; border-radius:10px; background:#0ff; color:#000; cursor:pointer;}
+
+
+/* ======================================================= */
+/* MEDIAS QUERIES (ESTILOS RESPONSIVOS PARA MÓVILES) */
+/* ======================================================= */
+
+@media (max-width: 768px) {
+    
+    .wrapper {
+        padding: 10px; 
+    }
+    
+    .main-header {
+        font-size: 20px; 
+        flex-direction: column; 
+    }
+    .header-logo {
+        margin-bottom: 5px;
+    }
+    
+    .axie-grid {
+        gap: 30px; 
+    }
+    
+    .axie-card {
+        width: 90%; 
+        max-width: 350px; 
+    }
+    
+    #calculator {
+        position: static; 
+        width: 90%;
+        max-width: 350px; 
+        margin: 30px auto 0; 
+        left: auto;
+        bottom: auto;
+    }
+
+    .card-btn {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .cards-row {
+        gap: 15px; 
+    }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<h1 class="main-header">
+    DMG-Calculator 👽Nik3LoDeuM👽 — NKL ALL STAR 
+    <img src="img/logo.png" alt="NKL ALL STARS Logo" class="header-logo"> 
+</h1> 
+
+<div class="axie-grid" id="axieGrid"></div>
+
+<div class="total-damage">Total: <span id="totalDamageValue">0</span></div> 
+<button id="resetBtn">Resetear todo</button>
+
+<div class="overlay" id="overlay"></div>
+<div class="select-popup" id="selectPopup"></div>
+</div>
+
+<div id="calculator">
+  <div id="calc-display">0</div>
+  <div class="calc-buttons">
+    <button class="calc-btn">7</button><button class="calc-btn">8</button><button class="calc-btn">9</button><button class="calc-btn">/</button>
+    <button class="calc-btn">4</button><button class="calc-btn">5</button><button class="calc-btn">6</button><button class="calc-btn">*</button>
+    <button class="calc-btn">1</button><button class="calc-btn">2</button><button class="calc-btn">3</button><button class="calc-btn">-</button>
+    <button class="calc-btn">0</button><button class="calc-btn">.</button><button class="calc-btn">=</button><button class="calc-btn">+</button>
+    <button class="calc-btn clear-btn">C</button>
+  </div>
+</div>
+
+<script>
+// ====================== OBJETO DE DAÑOS (CON CLAVES BASE) ======================
+const DAMAGE = {
+  // --- FRONT AXIE CARDS ---
+  goda: { base: 130, solo: { bestia: 130, planta: 149, pez: 110 }, combo: { bestia: 126, planta: 145, pez: 107 } },
+  scaly_front: { base: 95, solo: { bestia: 95, planta: 112, pez: 129 }, combo: { bestia: 93, planta: 109, pez: 126 } },
+  crock_front: { base: 91, solo: { bestia: 91, planta: 107, pez: 123 }, combo: { bestia: 88, planta: 104, pez: 120 } },
+  catteil_front: { base: 9, solo: { bestia: 9, planta: 10, pez: 12 }, combo: { bestia: 8, planta: 10, pez: 12 } }, 
+  
+  // --- MID AXIE CARDS ---
+  kotaro_mid: { base: 79, solo: { bestia: 79, planta: 93, pez: 107 }, combo: { bestia: 78, planta: 92, pez: 106 } }, 
+  scaly_mid: { base: 98, solo: { bestia: 98, planta: 115, pez: 132 }, combo: { bestia: 97, planta: 114, pez: 131 } },
+  crock_mid: { base: 93, solo: { bestia: 93, planta: 110, pez: 126 }, combo: { bestia: 92, planta: 109, pez: 125 } },
+  iguana: { base: 70, solo: { bestia: 70, planta: 82, pez: 94 }, combo: { bestia: 69, planta: 81, pez: 94 } },
+  
+  // --- BACK AXIE CARDS ---
+  silence: { base: 0, solo: { bestia: 0, planta: 0, pez: 0 }, combo: { bestia: 0, planta: 0, pez: 0 } }, 
+  scaly_back: { base: 95, solo: { bestia: 95, planta: 112, pez: 129 }, combo: { bestia: 93, planta: 109, pez: 126 } }, 
+  flecha: { // Base es un objeto ya que el daño base varía
+    base: { con: 100, sin: 200 }, 
+    solo: { bestia: { con: 100, sin: 200 }, planta: { con: 114, sin: 229 }, pez: { con: 85, sin: 170 } },
+    combo: { bestia: { con: 97, sin: 194 }, planta: { con: 111, sin: 223 }, pez: { con: 82, sin: 165 } }
+  },
+  twin: { base: 35, solo: { bestia: 35, planta: 40, pez: 29 }, combo: { bestia: 34, planta: 39, pez: 28 } },
+
+  // --- FRONT2 AXIE CARDS (UNIFICADOS CON MID) ---
+  kotaro_front2: { base: 79, solo: { bestia: 79, planta: 93, pez: 107 }, combo: { bestia: 78, planta: 92, pez: 106 } }, 
+  scaly_front2: { base: 98, solo: { bestia: 98, planta: 115, pez: 132 }, combo: { bestia: 97, planta: 114, pez: 131 } }, 
+  crock_front2: { base: 93, solo: { bestia: 93, planta: 110, pez: 126 }, combo: { bestia: 92, planta: 109, pez: 125 } }, 
+  catteil_front2: { base: 8, solo: { bestia: 8, planta: 10, pez: 11 }, combo: { bestia: 8, planta: 9, pez: 11 } }, 
+
+  // --- MID2 AXIE CARDS (Iguales a Mid en cartas comunes) ---
+  kotaro_mid2: { base: 79, solo: { bestia: 79, planta: 93, pez: 107 }, combo: { bestia: 78, planta: 92, pez: 106 } }, 
+  scaly_mid2: { base: 98, solo: { bestia: 98, planta: 115, pez: 132 }, combo: { bestia: 97, planta: 114, pez: 131 } }, 
+  crock_mid2: { base: 93, solo: { bestia: 93, planta: 110, pez: 126 }, combo: { bestia: 92, planta: 109, pez: 125 } }, 
+  rice: { base: 90, solo: { bestia: 90, planta: 103, pez: 76 }, combo: { bestia: 89, planta: 102, pez: 75 } }, 
+};
+
+// ====================== AXIES POOL (INCLUYE REDUCCIÓN Y AUMENTO) ======================
+const AXIES_POOL = [
+  { id: 1, name: 'Front', img: 'img/front.png', class: 'pez', cards: [
+    { key: 'goda', img: 'img/goda.png', reduction: 0, amplification: 0 }, 
+    { key: 'scaly_front', img: 'img/scaly lunge.png', reduction: 0, amplification: 0 }, 
+    { key: 'crock_front', img: 'img/crock.png', reduction: 0, amplification: 0 }, 
+    { key: 'catteil_front', img: 'img/catteil.png', reduction: 0, amplification: 0 }
+  ]},
+  { id: 2, name: 'Mid', img: 'img/mid.png', class: 'pez', cards: [
+    { key: 'kotaro_mid', img: 'img/kotaro.png', reduction: 0, amplification: 0 }, 
+    { key: 'scaly_mid', img: 'img/scaly lunge.png', reduction: 0, amplification: 0 },
+    { key: 'crock_mid', img: 'img/crock.png', reduction: 0, amplification: 0 }, 
+    { key: 'iguana', img: 'img/iguana.png', reduction: 0, amplification: 0 }
+  ]},
+  { id: 3, name: 'Back', img: 'img/back.png', class: 'pez', 
+    team: 'con', 
+    cards: [
+    { key: 'silence', img: 'img/silence.png', reduction: 0, amplification: 0 }, 
+    { key: 'scaly_back', img: 'img/scaly lunge.png', reduction: 0, amplification: 0 }, 
+    { key: 'flecha', img: 'img/flecha.png', reduction: 0, amplification: 0 }, 
+    { key: 'twin', img: 'img/twin.png', reduction: 0, amplification: 0 }
+  ]},
+  { id: 4, name: 'Front2', img: 'img/front2.png', class: 'pez', cards: [
+    { key: 'kotaro_front2', img: 'img/kotaro.png', reduction: 0, amplification: 0 }, 
+    { key: 'scaly_front2', img: 'img/scaly lunge.png', reduction: 0, amplification: 0 }, 
+    { key: 'crock_front2', img: 'img/crock.png', reduction: 0, amplification: 0 }, 
+    { key: 'catteil_front2', img: 'img/catteil.png', reduction: 0, amplification: 0 } 
+  ]},
+  { id: 5, name: 'Mid2', img: 'img/mid2.png', class: 'pez', cards: [
+    { key: 'kotaro_mid2', img: 'img/kotaro.png', reduction: 0, amplification: 0 }, 
+    { key: 'scaly_mid2', img: 'img/scaly lunge.png', reduction: 0, amplification: 0 }, 
+    { key: 'crock_mid2', img: 'img/crock.png', reduction: 0, amplification: 0 }, 
+    { key: 'rice', img: 'img/rice.png', reduction: 0, amplification: 0 } 
+  ]}
+];
+
+let GRID_AXIES=[
+  JSON.parse(JSON.stringify(AXIES_POOL[0])),
+  JSON.parse(JSON.stringify(AXIES_POOL[1])),
+  JSON.parse(JSON.stringify(AXIES_POOL[2]))
+];
+const MAX_CARDS=4;
+
+// Definiciones de imágenes para los botones de clase
+const CLASS_ICONS = {
+    bestia: [
+        { src: 'img/beast.png', alt: 'Beast' },
+        { src: 'img/mech.png', alt: 'Mech' },
+        { src: 'img/bug.png', alt: 'Bug' }
+    ],
+    pez: [
+        { src: 'img/aquatic.png', alt: 'Aquatic' },
+        { src: 'img/dawn.png', alt: 'Dawn' },
+        { src: 'img/bird.png', alt: 'Bird' }
+    ],
+    planta: [
+        { src: 'img/plant.png', alt: 'Plant' },
+        { src: 'img/dusk.png', alt: 'Dusk' },
+        { src: 'img/reptile.png', alt: 'Reptile' }
+    ]
+};
+
+function renderGrid(){
+  const grid=document.getElementById("axieGrid");
+  grid.innerHTML="";
+  GRID_AXIES.forEach((axie,index)=>{
+    const div=document.createElement("div");
+    div.className="axie-card";
+    div.dataset.index=index;
+
+    let cardsHTML=axie.cards.map((c,i)=>`
+      <div class="card-controls">
+          <button class="card-btn" data-card="${i}">
+            <img src="${c.img}">
+            <div class="counter">${c.count || 0}</div>
+          </button>
+          
+          <div class="modifier-row">
+              <button class="reduce-btn" data-card="${i}">
+                  <img src="img/low.png" alt="-20%" title="Reducir 20% el daño">
+                  <div class="reduction-counter">${c.reduction}</div>
+              </button>
+              <button class="amplify-btn" data-card="${i}">
+                  <img src="img/attack-up.png" alt="+20%" title="Aumentar 20% el daño">
+                  <div class="amplification-counter">${c.amplification || 0}</div>
+              </button>
+          </div>
+          
+          <button class="reset-reduction-btn" data-card="${i}">
+              <img src="img/refrech.png" alt="Reiniciar Reducción/Aumento" title="Reiniciar reducción/aumento">
+          </button>
+      </div>
+    `).join('');
+
+    const hasFlecha = axie.cards.some(c => c.key === 'flecha');
+    
+    let riskyBeastHTML = `<div class="risky-beast-box"`;
+    
+    if (!hasFlecha) {
+        riskyBeastHTML += ` style="visibility:hidden;"`;
+    }
+    
+    riskyBeastHTML += `>
+        <button data-team="con" class="${axie.team === 'con' ? 'active' : ''}">Con team</button>
+        <button data-team="sin" class="${axie.team === 'sin' ? 'active' : ''}">Sin team</button>
+    </div>`;
+
+    if (hasFlecha) {
+        div.dataset.hasButtons = 'true';
+    }
+
+    // Función para generar los iconos del botón
+    const generateClassIcons = (className) => {
+        return CLASS_ICONS[className].map(icon => 
+            `<img src="${icon.src}" alt="${icon.alt}" class="class-icon">`
+        ).join('');
+    };
+
+
+    div.innerHTML=`
+      <img src="${axie.img}" class="axie-img">
+      <div class="class-row">
+        <button class="class-btn ${axie.class==='bestia'?'active':''}" data-class="bestia">
+            ${generateClassIcons('bestia')}
+        </button>
+        <button class="class-btn ${axie.class==='planta'?'active':''}" data-class="planta">
+            ${generateClassIcons('planta')}
+        </button>
+        <button class="class-btn ${axie.class==='pez'?'active':''}" data-class="pez">
+            ${generateClassIcons('pez')}
+        </button>
+        </div>
+      ${riskyBeastHTML}
+      <div class="cards-row">${cardsHTML}</div>
+      <div class="damage-display" id="axie${index}Damage">0</div>
+      <button class="reset-axie-btn" data-index="${index}">Reset</button> `;
+    grid.appendChild(div);
+  });
+  attachEvents();
+  // Al renderizar, actualizar el daño inicial
+  document.querySelectorAll(".axie-card").forEach(updateDamage);
+  updateTotalDamage();
+}
+renderGrid();
+
+// FUNCIÓN: Resetear solo el daño de un Axie
+function resetAxieDamage(axieDiv) {
+    const index = axieDiv.dataset.index;
+    const axie = GRID_AXIES[index];
+
+    // 1. Resetear contadores de uso de cartas
+    axieDiv.querySelectorAll(".card-btn .counter").forEach(counter => {
+        counter.textContent = '0';
+    });
+    
+    // 2. Resetear contadores de reducción y AUMENTO de daño
+    axie.cards.forEach(card => {
+        card.reduction = 0;
+        card.amplification = 0; 
+    });
+    axieDiv.querySelectorAll(".reduction-counter").forEach(counter => {
+        counter.textContent = '0';
+    });
+    axieDiv.querySelectorAll(".amplification-counter").forEach(counter => { 
+        counter.textContent = '0';
+    });
+    
+    // 3. Recalcular el daño de ese Axie a 0
+    updateDamage(axieDiv);
+    
+    // 4. Actualizar el total global
+    updateTotalDamage();
+}
+
+
+function attachEvents(){
+  document.querySelectorAll(".axie-img").forEach(img=>{img.addEventListener("click",()=>{openSelector(img.parentElement.dataset.index);});});
+  
+  // Listener para el botón de reset individual
+  document.querySelectorAll(".reset-axie-btn").forEach(btn=>{
+      btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          resetAxieDamage(btn.closest(".axie-card"));
+      });
+  });
+
+  document.querySelectorAll(".class-btn").forEach(btn=>{btn.addEventListener("click",()=>{
+    const parent=btn.closest(".axie-card"),index=parent.dataset.index;
+    GRID_AXIES[index].class=btn.dataset.class;
+    parent.querySelectorAll(".class-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    updateDamage(parent);updateTotalDamage();
+  });});
+  
+  document.querySelectorAll(".risky-beast-box button").forEach(btn=>{btn.addEventListener("click",()=>{
+    const parent=btn.closest(".axie-card"),index=parent.dataset.index;
+    if (GRID_AXIES[index].cards.some(c=>c.key==='flecha')) {
+        GRID_AXIES[index].team=btn.dataset.team;
+        parent.querySelectorAll(".risky-beast-box button").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        updateDamage(parent);updateTotalDamage();
+    }
+  });});
+  
+  // Listener de incremento de cartas
+  document.querySelectorAll(".card-btn").forEach(btn=>{btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const parent=btn.closest(".axie-card"), index=parent.dataset.index;
+    const cardIndex=btn.dataset.card;
+
+    const counters=[...parent.querySelectorAll('.counter')].map(c=>parseInt(c.textContent));
+    let total=counters.reduce((a,b)=>a+b,0);
+    
+    let counter=btn.querySelector(".counter"),count=parseInt(counter.textContent);
+    
+    count=(count+1)%3;
+    if(total - parseInt(counter.textContent) + count > MAX_CARDS){count=0;}
+
+    counter.textContent=count;
+
+    updateDamage(parent);updateTotalDamage();
+  });});
+  
+  // ====================== LISTENERS DE MODIFICACIÓN DE DAÑO ======================
+  
+  // Listener para el botón de reducir (low.png)
+  document.querySelectorAll(".reduce-btn").forEach(btn=>{btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const parent=btn.closest(".axie-card"), index=parent.dataset.index;
+    const cardIndex=btn.dataset.card;
+    const cardData = GRID_AXIES[index].cards[cardIndex];
+    
+    // Máximo 5 reducciones (100%)
+    if(cardData.reduction < 5) {
+        cardData.reduction++;
+        btn.querySelector(".reduction-counter").textContent = cardData.reduction;
+        updateDamage(parent);
+        updateTotalDamage();
+    }
+  });});
+
+  // NUEVO: Listener para el botón de aumentar (attack-up.png)
+  document.querySelectorAll(".amplify-btn").forEach(btn=>{btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const parent=btn.closest(".axie-card"), index=parent.dataset.index;
+    const cardIndex=btn.dataset.card;
+    const cardData = GRID_AXIES[index].cards[cardIndex];
+    
+    // Máximo 5 aumentos (100% extra de daño)
+    if(cardData.amplification < 5) {
+        cardData.amplification++;
+        btn.querySelector(".amplification-counter").textContent = cardData.amplification;
+        updateDamage(parent);
+        updateTotalDamage();
+    }
+  });});
+  
+  // Listener para el botón de reset de reducción/aumento (refrech.png)
+  document.querySelectorAll(".reset-reduction-btn").forEach(btn=>{btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const parent=btn.closest(".axie-card"), index=parent.dataset.index;
+    const cardIndex=btn.dataset.card;
+    const cardData = GRID_AXIES[index].cards[cardIndex];
+    
+    cardData.reduction = 0;
+    cardData.amplification = 0; 
+    
+    const controls = btn.closest(".card-controls");
+    controls.querySelector(".reduction-counter").textContent = 0;
+    controls.querySelector(".amplification-counter").textContent = 0; 
+    
+    updateDamage(parent);
+    updateTotalDamage();
+  });});
+}
+
+function updateDamage(axieDiv){
+  const i=axieDiv.dataset.index,axie=GRID_AXIES[i];
+  let total=0;
+  const cardCounts = [...axieDiv.querySelectorAll(".card-btn .counter")].map(c=>parseInt(c.textContent));
+  const totalCardsPlayed = cardCounts.reduce((a,b)=>a+b,0);
+  const anyCombo = totalCardsPlayed > 1; 
+  
+  const twinMultiplier = (axie.id === 3 && totalCardsPlayed >= 2) ? 2 : 1; 
+
+  axieDiv.querySelectorAll(".card-btn").forEach((btn,idx)=>{
+    const count=parseInt(btn.querySelector(".counter").textContent); if(count===0) return;
+    const key=axie.cards[idx].key; 
+    let dmgSet=DAMAGE[key]; 
+    let combo=anyCombo?"combo":"solo";
+    let clase=axie.class; 
+    
+    if (!dmgSet) { return; } 
+
+    // --- LÓGICA DE REDUCCIÓN Y AUMENTO ---
+    const reductionCount = axie.cards[idx].reduction; 
+    const amplificationCount = axie.cards[idx].amplification; 
+    
+    let baseDmg = dmgSet.base; 
+    
+    if (key === "flecha") {
+        const team = axie.team || 'con';
+        baseDmg = dmgSet.base[team]; 
+    }
+    
+    // Daño BASE completo (sin modificación)
+    const fullBaseDmg = baseDmg;
+
+    // Modificador combinado (Aumento - Reducción)
+    const combinedModifier = 1 + (0.20 * amplificationCount) - (0.20 * reductionCount);
+
+    // Daño BASE modificado: Cap en 0. Si es positivo, es el daño modificado.
+    const modifiedBaseDmg = Math.max(0, fullBaseDmg * combinedModifier);
+    
+    // PASO 1: Calcular el multiplicador de clase/combo (proporción original)
+    let multiplier = 1;
+    let originalBase = fullBaseDmg;
+
+    if (key === "flecha") { 
+        const team = axie.team || 'con'; 
+        const originalDmg = dmgSet[combo][clase][team]; 
+        originalBase = dmgSet.base[team];
+        multiplier = originalBase > 0 ? (originalDmg / originalBase) : 1; 
+    }
+    else {
+        const originalDmg = dmgSet[combo][clase];
+        multiplier = originalBase > 0 ? (originalDmg / originalBase) : 1;
+    }
+    
+    // PASO 2: Aplicar el multiplicador a los daños base (COMPLETO y MODIFICADO)
+    const finalFullDmg = fullBaseDmg * multiplier;
+    const finalModifiedDmg = modifiedBaseDmg * multiplier;
+
+    // PASO 3: Lógica de aplicación del contador (Primera carta MODIFICADA, resto COMPLETA)
+    let cardTotalDmg = 0;
+    
+    // Si hay alguna modificación aplicada (reducción o aumento)
+    if (reductionCount > 0 || amplificationCount > 0) {
+        // Primera carta: aplica el daño modificado
+        cardTotalDmg += finalModifiedDmg;
+        
+        // Cartas restantes (si count > 1): aplican el daño completo (SIN MODIFICACIÓN)
+        if (count > 1) {
+            cardTotalDmg += finalFullDmg * (count - 1);
+        }
+    } else {
+        // Si no hay modificación, todas las cartas aplican el daño completo
+        cardTotalDmg = finalFullDmg * count;
+    }
+    
+    // PASO 4: Aplicar Twin Strike
+    if (key === "twin") {
+        cardTotalDmg = cardTotalDmg * twinMultiplier;
+    }
+
+    // Redondeo al entero más cercano y suma al total del Axie
+    total += Math.round(cardTotalDmg); 
+  });
+  axieDiv.querySelector(`#axie${i}Damage`).textContent=Math.round(total);
+}
+
+function updateTotalDamage(){
+  let total=0; 
+  document.querySelectorAll(".damage-display").forEach(d=>{total+=parseInt(d.textContent);}); 
+  document.getElementById("totalDamageValue").textContent=total; 
+}
+
+function openSelector(i){
+  const popup=document.getElementById("selectPopup"),overlay=document.getElementById("overlay");
+  popup.innerHTML="";
+  AXIES_POOL.forEach(ax=>{
+    const b=document.createElement("button");
+    const img=document.createElement("img");
+    img.src=ax.img; 
+    img.style.width="80px"; 
+    img.style.height="80px"; 
+    img.style.objectFit="contain";
+    b.appendChild(img);
+    b.onclick=()=>{
+        // Copiar el axie, incluyendo los nuevos contadores
+        const newAxie = JSON.parse(JSON.stringify(ax));
+        // Transferir contadores si es el mismo axie
+        if(GRID_AXIES[i]) {
+            newAxie.cards.forEach(newCard => {
+                const oldCard = GRID_AXIES[i].cards.find(c => c.key === newCard.key);
+                if (oldCard) {
+                    newCard.reduction = oldCard.reduction;
+                    newCard.amplification = oldCard.amplification; 
+                }
+            });
+        }
+        GRID_AXIES[i] = newAxie; 
+        closeSelector(); 
+        renderGrid(); 
+        updateTotalDamage();
+    }
+    popup.appendChild(b);
+  });
+  overlay.style.display="block"; popup.style.display="flex"; popup.style.flexDirection="row"; popup.style.gap="10px";
+}
+
+function closeSelector(){document.getElementById("overlay").style.display="none";document.getElementById("selectPopup").style.display="none";}
+document.getElementById("overlay").onclick=closeSelector;
+
+// LÓGICA DE RESETAR TODO ACTUALIZADA (Reset Total)
+document.getElementById("resetBtn").onclick=()=>{
+  document.querySelectorAll(".axie-card").forEach(axieDiv => {
+      resetAxieDamage(axieDiv);
+  });
+}
+
+// ====================== CALCULADORA (MANTENIDO) ======================
+const display=document.getElementById("calc-display"); let current="";
+document.querySelectorAll(".calc-btn").forEach(btn=>{btn.addEventListener("click",()=>{
+  const val=btn.textContent;
+  if(val==="C") current="";
+  else if(val==="="){try{current=eval(current).toString();}catch{current="Error";}}
+  else current+=val;
+  display.textContent=current||"0";
+});});
+document.addEventListener("keydown",(e)=>{
+  if(e.key.match(/[0-9+\-*/.]/)) current+=e.key;
+  else if(e.key==="Enter"){try{current=eval(current).toString()}catch{current="Error";}}
+  else if(e.key==="Backspace") current=current.slice(0,-1);
+  else if(e.key==="Escape") current="";
+  display.textContent=current||"0";
+});
+</script>
+</body>
+</html>
