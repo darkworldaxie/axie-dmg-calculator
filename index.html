@@ -142,34 +142,39 @@ body::before {
 
 /* FIX: ESTILO PARA LAS IMÁGENES DENTRO DE LOS BOTONES DE MODIFICACIÓN */
 .reduce-btn img, .amplify-btn img, .reset-reduction-btn img {
-    width: 100%; /* El 100% del área de contenido del botón (25px - 4px de padding = 21px) */
+    width: 100%; 
     height: 100%;
     object-fit: contain; 
 }
 
-/* ESTILOS ESPECÍFICOS DE REDUCCIÓN (-20%) */
+/* === INICIO DE ARREGLO DE COLORES DE BORDES === */
+
+/* ESTILOS ESPECÍFICOS DE REDUCCIÓN (-20%) - NUEVO COLOR ROJO */
 .reduce-btn {
-    border-color: #0ff; 
+    border-color: #ff0000; /* ROJO */
 }
 .reduce-btn:hover {
-    background: #0d2b2b;
+    background: #330000; /* Hover rojo oscuro */
 }
 
-/* ESTILOS ESPECÍFICOS DE AUMENTO (+20%) */
+/* ESTILOS ESPECÍFICOS DE AUMENTO (+20%) - NUEVO COLOR VERDE */
 .amplify-btn {
-    border-color: #ffcc00; /* Color amarillo/oro */
+    border-color: #00cc00; /* VERDE */
 }
 .amplify-btn:hover {
-    background: #333300;
+    background: #003300; /* Hover verde oscuro */
 }
 
-/* ESTILOS ESPECÍFICOS DE RESET */
+/* ESTILOS ESPECÍFICOS DE RESET - NUEVO COLOR AZUL */
 .reset-reduction-btn {
-    border-color: #ff0055;
+    border-color: #00aaff; /* AZUL */
 }
 .reset-reduction-btn:hover {
-    background: #330011;
+    background: #001f33; /* Hover azul oscuro */
 }
+
+/* === FIN DE ARREGLO DE COLORES DE BORDES === */
+
 
 /* Contador de Reducción */
 .reduction-counter {
@@ -190,7 +195,7 @@ body::before {
     line-height: 1; 
 }
 
-/* NUEVO: Contador de Aumento */
+/* Contador de Aumento */
 .amplification-counter {
     position: absolute;
     top: -5px; 
@@ -213,7 +218,25 @@ body::before {
 .damage-display{margin-top:10px; font-size:18px; font-weight:bold;}
 .total-damage{margin-top:20px; font-size:22px; font-weight:bold;} 
 
-.select-popup{position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:#11161d; border:2px solid #0ff; border-radius:12px; padding:20px; display:none; flex-direction:row; gap:10px; z-index:10;}
+/* === ARREGLO DE POPUP DE SELECCIÓN DE AXIE === */
+.select-popup{
+    position:fixed; /* CRÍTICO: Debe ser fixed para la superposición */
+    top:50%; 
+    left:50%; 
+    transform:translate(-50%, -50%); 
+    background:#11161d; 
+    border:2px solid #0ff; 
+    border-radius:12px; 
+    padding:20px; 
+    display:none; 
+    flex-direction:row; 
+    flex-wrap: wrap; /* Para que los axies bajen de línea */
+    justify-content: center;
+    gap:10px; 
+    z-index:10;
+    max-height: 80vh; /* CRÍTICO: Limita la altura */
+    overflow-y: auto; /* CRÍTICO: Permite hacer scroll si hay muchos axies */
+}
 .overlay{position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; z-index:5;}
 
 /* Estilo para simular transparencia en el pop-up */
@@ -252,8 +275,20 @@ body::before {
 .risky-beast-box button{padding:4px 10px; border-radius:8px; background:#11161d; border:2px solid #2a3342; color:#e6eef8; cursor:pointer;}
 .risky-beast-box button.active{border-color:#0ff;}
 
-/* Calculadora (Desktop) */
-#calculator{position:fixed; bottom:20px; left:20px; width:220px; background:#11161d; border:2px solid #0ff; border-radius:12px; padding:10px; color:#0ff; font-family:monospace; z-index:100;}
+/* Calculadora (Desktop: Fija en la esquina inferior izquierda) */
+#calculator{
+    position:fixed; 
+    bottom:20px; 
+    left:20px; 
+    width:220px; 
+    background:#11161d; 
+    border:2px solid #0ff; 
+    border-radius:12px; 
+    padding:10px; 
+    color:#0ff; 
+    font-family:monospace; 
+    z-index:100;
+}
 #calc-display{
     width:100%; 
     background:#0d1117; 
@@ -280,7 +315,7 @@ body::before {
 
 @media (max-width: 768px) {
     
-    /* ***** REINICIO CRÍTICO DEL BODY ***** */
+    /* ***** REINICIO CRÍTICO DEL BODY PARA FLUJO MÓVIL ***** */
     body {
         /* Desactiva el flexbox para que el contenido fluya verticalmente */
         display: block; 
@@ -289,7 +324,7 @@ body::before {
     
     .wrapper {
         padding: 0;
-        margin: 0 auto; /* Asegura el centrado del contenido principal */
+        margin: 0 auto; 
     }
     
     .main-header {
@@ -314,10 +349,10 @@ body::before {
         position: static; /* Saca de fixed y la pone en el flujo normal (al final) */
         
         /* Neutraliza todas las posibles coordenadas de fixed */
-        top: auto;
-        bottom: auto;
-        left: auto;
-        right: auto; 
+        top: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important; 
         
         /* Estilos de tamaño y centrado para la vista móvil */
         width: 90%;
@@ -326,7 +361,7 @@ body::before {
         /* Margen: Arriba (30px), Lados (auto para centrar), Abajo (30px) */
         margin: 30px auto 30px; 
         
-        z-index: 1; /* Bajamos el z-index */
+        z-index: 1; 
     }
 
     .card-btn {
@@ -336,6 +371,13 @@ body::before {
     
     .cards-row {
         gap: 15px; 
+    }
+    
+    /* AJUSTE DEL POPUP PARA MÓVIL */
+    .select-popup {
+        width: 95%; 
+        max-width: 450px; 
+        padding: 10px;
     }
 }
 </style>
@@ -646,7 +688,7 @@ function attachEvents(){
     }
   });});
 
-  // NUEVO: Listener para el botón de aumentar (attack-up.png)
+  // Listener para el botón de aumentar (attack-up.png)
   document.querySelectorAll(".amplify-btn").forEach(btn=>{btn.addEventListener("click",e=>{
     e.stopPropagation();
     const parent=btn.closest(".axie-card"), index=parent.dataset.index;
@@ -803,7 +845,9 @@ function openSelector(i){
     }
     popup.appendChild(b);
   });
-  overlay.style.display="block"; popup.style.display="flex"; popup.style.flexDirection="row"; popup.style.gap="10px";
+  // Se eliminan las propiedades de estilo que duplicaban el CSS.
+  overlay.style.display="block"; 
+  popup.style.display="flex"; 
 }
 
 function closeSelector(){document.getElementById("overlay").style.display="none";document.getElementById("selectPopup").style.display="none";}
